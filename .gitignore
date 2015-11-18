@@ -13,9 +13,11 @@ hs_err_pid*
 
 SimpleDB/.classpath
 SimpleDB/.settings
+SimpleDB/bin/
 
 SimpleDBClient/.classpath
 SimpleDBClient/.settings
+SimpleDBClient/bin/
 
 .metadata/
 
