@@ -1,7 +1,8 @@
 package simpledb.buffer;
 
+import simpledb.file.Block;
+import simpledb.file.Page;
 import simpledb.server.SimpleDB;
-import simpledb.file.*;
 
 /**
  * An individual buffer.
@@ -58,6 +59,15 @@ public class Buffer {
     */
    public String getString(int offset) {
       return contents.getString(offset);
+   }
+   
+   /**
+    * Returns the log sequence number of the buffer
+    * 
+    * @return log sequence number of buffer
+    */
+   public int getLSN() {
+	   return logSequenceNumber;
    }
 
    /**
@@ -157,6 +167,16 @@ public class Buffer {
     */
    boolean isModifiedBy(int txnum) {
       return txnum == modifiedBy;
+   }
+   
+   /**
+    * Returns true if the buffer is dirty
+    * due to a modification by any transaction.
+    * 
+    * @return true if the buffer is modified
+    */
+   boolean isModified() {
+      return modifiedBy>0;
    }
 
    /**

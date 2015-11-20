@@ -1,5 +1,7 @@
 package simpledb.buffer;
 
+import java.util.HashMap;
+
 import simpledb.file.*;
 
 /**
@@ -8,8 +10,8 @@ import simpledb.file.*;
  *
  */
 class BasicBufferMgr {
-   private Buffer[] bufferpool;
    private int numAvailable;
+   private HashMap<Block, Buffer> bufferPoolMap; 
    
    /**
     * Creates a buffer manager having the specified number 
@@ -25,10 +27,8 @@ class BasicBufferMgr {
     * @param numbuffs the number of buffer slots to allocate
     */
    BasicBufferMgr(int numbuffs) {
-      bufferpool = new Buffer[numbuffs];
+      bufferPoolMap = new HashMap<Block,Buffer>();
       numAvailable = numbuffs;
-      for (int i=0; i<numbuffs; i++)
-         bufferpool[i] = new Buffer();
    }
    
    /**
@@ -36,9 +36,14 @@ class BasicBufferMgr {
     * @param txnum the transaction's id number
     */
    synchronized void flushAll(int txnum) {
-      for (Buffer buff : bufferpool)
-         if (buff.isModifiedBy(txnum))
-         buff.flush();
+	   for (Block block : bufferPoolMap.keySet()) {
+		   if (bufferPoolMap.get(block).isModifiedBy(txnum)) {
+			   bufferPoolMap.get(block).flush();
+			}
+	   }
+//      for (Buffer buff : bufferpool)
+//         if (buff.isModifiedBy(txnum))
+//         buff.flush();
    }
    
    /**
@@ -57,6 +62,10 @@ class BasicBufferMgr {
          if (buff == null)
             return null;
          buff.assignToBlock(blk);
+         /**
+          * Add the buff to bufferPoolMap
+          */
+         bufferPoolMap.put(blk, buff);
       }
       if (!buff.isPinned())
          numAvailable--;
@@ -78,6 +87,10 @@ class BasicBufferMgr {
       if (buff == null)
          return null;
       buff.assignToNew(filename, fmtr);
+      /**
+       * Add the buff to bufferPoolMap
+       */
+      bufferPoolMap.put(buff.block(), buff);
       numAvailable--;
       buff.pin();
       return buff;
@@ -102,18 +115,67 @@ class BasicBufferMgr {
    }
    
    private Buffer findExistingBuffer(Block blk) {
-      for (Buffer buff : bufferpool) {
-         Block b = buff.block();
-         if (b != null && b.equals(blk))
-            return buff;
-      }
-      return null;
+      return bufferPoolMap.get(blk);    
    }
    
    private Buffer chooseUnpinnedBuffer() {
-      for (Buffer buff : bufferpool)
-         if (!buff.isPinned())
-         return buff;
-      return null;
+	   Buffer buff = null;
+	   if(numAvailable > 0) {
+		   buff = new Buffer();
+	   }
+	   else {
+		   buff = findLeastRecentlyModified();
+	   }
+	   return buff;
    }
+
+   /**
+    * Finds a buffer which was least recently modified and is unpinned
+    * If no such buffer found, tries to find an unpinned buffer which 
+    * was not modified and has the least LSN. 
+    * Returns null if could not find any such buffer
+    * 
+    * @return
+    */
+    private Buffer findLeastRecentlyModified() {
+    	Buffer buffModified = null;
+    	Buffer buffUnModified = null;
+    	int minLSNModified = Integer.MAX_VALUE;
+    	int minLSNUnModified = Integer.MAX_VALUE;
+    	
+    	for (Block block : bufferPoolMap.keySet()) {
+    		Buffer buff = bufferPoolMap.get(block);
+    		/**
+    		 * Loop through unpinned buffer
+    		 */
+    		if (!buff.isPinned()) {
+    			int lsn = buff.getLSN();
+    			/*
+    			 * buffer is modified
+    			 */
+    			if (lsn >= 0 && buff.isModified()) {
+    				if (buff.getLSN() < minLSNModified) {
+    					buffModified = buff;
+    					minLSNModified = buff.getLSN();
+    				}
+    			}
+    			/*
+    			 * buffer is not modified
+    			 */
+    			else {
+    				if (lsn >= 0 && lsn < minLSNUnModified) {
+    					buffUnModified = buff;
+    					minLSNUnModified = lsn;
+    				}
+    			}
+    		}
+    	}
+    	if (buffModified != null) {
+    		return buffModified;
+    	}
+    	else if (buffUnModified != null) {
+    		return buffUnModified;
+    	}
+    	return null;
+    }
 }
