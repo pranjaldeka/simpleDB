@@ -41,9 +41,6 @@ class BasicBufferMgr {
 			   bufferPoolMap.get(block).flush();
 			}
 	   }
-//      for (Buffer buff : bufferpool)
-//         if (buff.isModifiedBy(txnum))
-//         buff.flush();
    }
    
    /**
@@ -163,7 +160,7 @@ class BasicBufferMgr {
     			 * buffer is not modified
     			 */
     			else {
-    				if (lsn >= 0 && lsn < minLSNUnModified) {
+    				if (lsn < minLSNUnModified) {
     					buffUnModified = buff;
     					minLSNUnModified = lsn;
     				}
