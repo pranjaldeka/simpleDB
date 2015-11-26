@@ -20,6 +20,8 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
+   private int readCount = 0;
+   private int writeCount = 0;
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -89,6 +91,7 @@ public class Buffer {
       if (lsn >= 0)
 	      logSequenceNumber = lsn;
       contents.setInt(offset, val);
+      writeCount++;
    }
 
    /**
@@ -110,6 +113,8 @@ public class Buffer {
       if (lsn >= 0)
 	      logSequenceNumber = lsn;
       contents.setString(offset, val);
+      writeCount++;		//is there a cumulative writeCount for writing int and string?
+      					//right now they are different... need to confirm this.
    }
 
    /**
@@ -135,12 +140,21 @@ public class Buffer {
          modifiedBy = -1;
       }
    }
+   
+   public int getReadCount(){
+	   return readCount;
+   }
+   
+   public int getWriteCount(){
+	   return writeCount;
+   }
 
    /**
     * Increases the buffer's pin count.
     */
    void pin() {
       pins++;
+      readCount++;	//Even if a buffer is written, it will be read first. 
    }
 
    /**
@@ -191,6 +205,8 @@ public class Buffer {
       blk = b;
       contents.read(blk);
       pins = 0;
+     // readCount = 0;	//should not be set to 0 bcz its a property of a buffer
+     // writeCount = 0; //same as above.. need to confirm with someone
    }
 
    /**
@@ -206,5 +222,7 @@ public class Buffer {
       fmtr.format(contents);
       blk = contents.append(filename);
       pins = 0;
+      //readCount = 0;
+      //writeCount = 0;
    }
 }

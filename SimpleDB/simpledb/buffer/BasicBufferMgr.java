@@ -166,13 +166,25 @@ class BasicBufferMgr {
     				}
     			}
     		}
-    	}
+    	}    	
     	if (buffModified != null) {
-    		return buffModified;
+    		bufferPoolMap.remove(buffModified.block());
+    		return buffModified;    		
     	}
     	else if (buffUnModified != null) {
+    		bufferPoolMap.remove(buffUnModified.block());
     		return buffUnModified;
-    	}
+    	}    	
     	return null;
+    }
+    
+    /**
+     * Stores the readCount and writeCount of a particular buffer (which is given as argument)
+     * Still not clear where this method should get called from
+     * Does it get called for all available buffers?
+     */
+    public void getStatistics(Buffer buff){
+    	int rCount = buff.getReadCount();
+    	int wCount = buff.getWriteCount();
     }
 }
