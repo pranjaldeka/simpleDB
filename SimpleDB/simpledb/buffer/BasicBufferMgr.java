@@ -184,7 +184,25 @@ class BasicBufferMgr {
      * Does it get called for all available buffers?
      */
     public void getStatistics(Buffer buff){
-    	int rCount = buff.getReadCount();
-    	int wCount = buff.getWriteCount();
+    	int i=1;
+    	for (Block block : bufferPoolMap.keySet()) 
+    	{
+    		Buffer buff_temp = bufferPoolMap.get(block);
+    		/**
+    		 * Loop through all pinned and un-pinned buffer
+    		 */
+    
+    				/**
+    				 *int rCount = buff_temp.getReadCount();
+    				 *int wCount = buff_temp.getWriteCount();
+    				**/
+    				System.out.println("------Buffer " + i + " ------");
+    				System.out.println("Read Count -->" + buff_temp.getReadCount());
+    				System.out.println("Write Count -->" + buff_temp.getWriteCount());
+    				i++;   				
+    				
+    		
+    	}
+    	
     }
 }
