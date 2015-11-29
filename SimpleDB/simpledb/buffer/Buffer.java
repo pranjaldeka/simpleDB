@@ -22,6 +22,10 @@ public class Buffer {
    private int logSequenceNumber = -1; // negative means no corresponding log record
    private int readCount = 0;
    private int writeCount = 0;
+   private int pinCount = 0;
+   private int unpinCount = 0;
+   private int blockCount = 0 ;
+	
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -48,7 +52,8 @@ public class Buffer {
     * @return the integer value at that offset
     */
    public int getInt(int offset) {
-      return contents.getInt(offset);
+	  readCount++;	//read count of buffer
+     return contents.getInt(offset);
    }
 
    /**
@@ -60,6 +65,7 @@ public class Buffer {
     * @return the string value at that offset
     */
    public String getString(int offset) {
+	  readCount++;	//read count of buffer
       return contents.getString(offset);
    }
    
@@ -123,6 +129,7 @@ public class Buffer {
     * @return a reference to a disk block
     */
    public Block block() {
+	   blockCount ++;
       return blk;
    }
 
@@ -154,7 +161,7 @@ public class Buffer {
     */
    void pin() {
       pins++;
-      readCount++;	//Even if a buffer is written, it will be read first. 
+      pinCount++;// pin count
    }
 
    /**
@@ -162,6 +169,7 @@ public class Buffer {
     */
    void unpin() {
       pins--;
+      unpinCount++ ;// unpin count
    }
 
    /**
@@ -225,4 +233,34 @@ public class Buffer {
       //readCount = 0;
       //writeCount = 0;
    }
+
+public int getUnpinCount() {
+	return unpinCount;
+}
+
+//public void setUnpinCount(int unpinCount) {
+//	this.unpinCount = unpinCount;
+//}
+
+public int getPinCount() {
+	return pinCount;
+}
+
+/**
+ * @return the blockCount
+ */
+public int getBlockCount() {
+	return blockCount;
+}
+
+/**
+ * @param blockCount the blockCount to set
+ */
+//public void setBlockCount(int blockCount) {
+//	this.blockCount = blockCount;
+//}
+
+//public void setPinCount(int pinCount) {
+//	this.pinCount = pinCount;
+//}
 }
