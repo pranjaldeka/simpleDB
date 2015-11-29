@@ -151,9 +151,9 @@ class BasicBufferMgr {
     			 * buffer is modified
     			 */
     			if (lsn >= 0 && buff.isModified()) {
-    				if (buff.getLSN() < minLSNModified) {
+    				if (lsn < minLSNModified) {
     					buffModified = buff;
-    					minLSNModified = buff.getLSN();
+    					minLSNModified = lsn;
     				}
     			}
     			/*
