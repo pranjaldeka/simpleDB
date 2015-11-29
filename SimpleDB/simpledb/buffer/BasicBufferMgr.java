@@ -141,6 +141,7 @@ class BasicBufferMgr {
     	int minLSNUnModified = Integer.MAX_VALUE;
     	
     	for (Block block : bufferPoolMap.keySet()) {
+    		System.out.println("Block number is " + block.number() +"\t" + block.fileName());
     		Buffer buff = bufferPoolMap.get(block);
     		/**
     		 * Loop through unpinned buffer
@@ -199,6 +200,9 @@ class BasicBufferMgr {
     				System.out.println("------Buffer " + i + " ------");
     				System.out.println("Read Count -->" + buff_temp.getReadCount());
     				System.out.println("Write Count -->" + buff_temp.getWriteCount());
+    				System.out.println("Pin Count -->" + buff_temp.getPinCount());
+    				System.out.println("Un pin Count -->" + buff_temp.getUnpinCount());
+    				System.out.println("Block Count -->" + buff_temp.getBlockCount());
     				i++;   				
     				
     		
