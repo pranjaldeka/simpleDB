@@ -212,6 +212,8 @@ class BasicBufferMgr {
     				System.out.println("Block Count -->" + buff_temp.getBlockCount());
     				System.out.println("Is pinned --> " + buff_temp.isPinned());
     				System.out.println("Is modified --> " + buff_temp.isModified());
+    				System.out.println("Block num " + block.number());
+    				System.out.println("Block file name " + block.fileName());
     	}
     	System.out.println("\n");
     	
