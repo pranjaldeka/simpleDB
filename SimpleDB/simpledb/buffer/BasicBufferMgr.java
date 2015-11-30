@@ -180,12 +180,12 @@ class BasicBufferMgr {
     }
     
     /**
-     * Stores the readCount and writeCount of a particular buffer (which is given as argument)
-     * Still not clear where this method should get called from
-     * Does it get called for all available buffers?
+     * Displays the statistics like read count, write count, etc of
+     * the buffers currently present in the bufferPoolMap
      */
-    public void getStatistics(Buffer buff){
+    public void getStatistics(){
     	int i=1;
+    	System.out.println("\n\nNumber of buffer available " + numAvailable);
     	for (Block block : bufferPoolMap.keySet()) 
     	{
     		Buffer buff_temp = bufferPoolMap.get(block);
@@ -197,15 +197,12 @@ class BasicBufferMgr {
     				 *int rCount = buff_temp.getReadCount();
     				 *int wCount = buff_temp.getWriteCount();
     				**/
-    				System.out.println("------Buffer " + i + " ------");
+    				System.out.println("\n------Buffer " + i++ + " ------");
     				System.out.println("Read Count -->" + buff_temp.getReadCount());
     				System.out.println("Write Count -->" + buff_temp.getWriteCount());
     				System.out.println("Pin Count -->" + buff_temp.getPinCount());
     				System.out.println("Un pin Count -->" + buff_temp.getUnpinCount());
     				System.out.println("Block Count -->" + buff_temp.getBlockCount());
-    				i++;   				
-    				
-    		
     	}
     	
     }
