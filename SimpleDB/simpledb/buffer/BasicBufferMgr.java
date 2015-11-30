@@ -177,10 +177,14 @@ class BasicBufferMgr {
     	}    	
     	if (buffModified != null) {
     		bufferPoolMap.remove(buffModified.block());
+    		System.out.println("****Returned MODIFIED Buffer Details :****\n ");
+    		getStatistics(buffModified);
     		return buffModified;    		
     	}
     	else if (buffUnModified != null) {
     		bufferPoolMap.remove(buffUnModified.block());
+    		System.out.println("****Returned UnMODIFIED Buffer Details :****\n ");
+    		getStatistics(buffUnModified);
     		return buffUnModified;
     	}    	
     	return null;
@@ -190,12 +194,12 @@ class BasicBufferMgr {
      * Displays the statistics like read count, write count, etc of
      * the buffers currently present in the bufferPoolMap
      */
-    public void getStatistics(){
-    	int i=1;
-    	System.out.println("\nNumber of buffer available " + numAvailable);
-    	for (Block block : bufferPoolMap.keySet()) 
-    	{
-    		Buffer buff_temp = bufferPoolMap.get(block);
+    public void getStatistics(Buffer buff_temp){
+    	//int i=1;
+    	//System.out.println("\nNumber of buffer available " + numAvailable);
+    	//for (Block block : bufferPoolMap.keySet()) 
+    	//{
+    		//Buffer buff_temp = bufferPoolMap.get(block);
     		/**
     		 * Loop through all pinned and un-pinned buffer
     		 */
@@ -204,7 +208,7 @@ class BasicBufferMgr {
     				 *int rCount = buff_temp.getReadCount();
     				 *int wCount = buff_temp.getWriteCount();
     				**/
-    				System.out.println("\n------Buffer " + i++ + " ------");
+    				//System.out.println("\n------Buffer " + i++ + " ------");
     				System.out.println("Read Count -->" + buff_temp.getReadCount());
     				System.out.println("Write Count -->" + buff_temp.getWriteCount());
     				System.out.println("Pin Count -->" + buff_temp.getPinCount());
@@ -212,7 +216,11 @@ class BasicBufferMgr {
     				System.out.println("Block Count -->" + buff_temp.getBlockCount());
     				System.out.println("Is pinned --> " + buff_temp.isPinned());
     				System.out.println("Is modified --> " + buff_temp.isModified());
-    	}
+    				//added
+    				System.out.println("LSN --> " + buff_temp.getLSN());
+    				System.out.println("Previous Block Stored --> " + buff_temp.block().number());
+    				//System.out.println("" + bufferPoolMap.);
+    //	}
     	System.out.println("\n");
     	
     }
