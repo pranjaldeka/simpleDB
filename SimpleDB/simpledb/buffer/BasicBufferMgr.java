@@ -3,6 +3,7 @@ package simpledb.buffer;
 import java.util.HashMap;
 
 import simpledb.file.*;
+import simpledb.server.SimpleDB;
 
 /**
  * Manages the pinning and unpinning of buffers to blocks.
@@ -117,9 +118,15 @@ class BasicBufferMgr {
    
    private Buffer chooseUnpinnedBuffer() {
 	   Buffer buff = null;
-	   if(numAvailable > 0) {
+	   /*
+	    * If the buffer is not full, then allocate a new buffer
+	    */
+	   if(bufferPoolMap.size() < SimpleDB.BUFFER_SIZE) {
 		   buff = new Buffer();
 	   }
+	   /*
+	    * Buffer is full. find a buffer for replacement
+	    */
 	   else {
 		   buff = findLeastRecentlyModified();
 	   }
@@ -141,7 +148,7 @@ class BasicBufferMgr {
     	int minLSNUnModified = Integer.MAX_VALUE;
     	
     	for (Block block : bufferPoolMap.keySet()) {
-    		System.out.println("Block number is " + block.number() +"\t" + block.fileName());
+
     		Buffer buff = bufferPoolMap.get(block);
     		/**
     		 * Loop through unpinned buffer
@@ -185,7 +192,7 @@ class BasicBufferMgr {
      */
     public void getStatistics(){
     	int i=1;
-    	System.out.println("\n\nNumber of buffer available " + numAvailable);
+    	System.out.println("\nNumber of buffer available " + numAvailable);
     	for (Block block : bufferPoolMap.keySet()) 
     	{
     		Buffer buff_temp = bufferPoolMap.get(block);
@@ -203,7 +210,10 @@ class BasicBufferMgr {
     				System.out.println("Pin Count -->" + buff_temp.getPinCount());
     				System.out.println("Un pin Count -->" + buff_temp.getUnpinCount());
     				System.out.println("Block Count -->" + buff_temp.getBlockCount());
+    				System.out.println("Is pinned --> " + buff_temp.isPinned());
+    				System.out.println("Is modified --> " + buff_temp.isModified());
     	}
+    	System.out.println("\n");
     	
     }
 }
