@@ -198,7 +198,7 @@ public class Buffer {
     * @return true if the buffer is modified
     */
    boolean isModified() {
-      return modifiedBy>0;
+      return modifiedBy != -1;
    }
 
    /**
