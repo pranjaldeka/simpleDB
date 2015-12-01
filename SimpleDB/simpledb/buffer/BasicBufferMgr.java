@@ -229,7 +229,7 @@ class BasicBufferMgr {
     				System.out.println("Is modified --> " + buff.isModified());
     				//added
     				System.out.println("LSN --> " + buff.getLSN());
-    				System.out.println("Previous Block Stored --> " + buff.block().number());
+    				System.out.println("Block Stored --> " + buff.block().number());
     				//System.out.println("" + bufferPoolMap.);
     	}
     	System.out.println("\n");
